@@ -21,7 +21,16 @@ app.use(express.static(path.join(__dirname, 'static')))
 // })
 
 app.get("/", function(req, res, next){
-  res.render("index", {appType:"Express"})
+  res.render("index", {appType:"Signup for Gabble!"})
+})
+// Todo: signup for Gabble or click to login if already a user
+
+app.post("/login", function(req, res){
+  // Todo: login form
+})
+
+app.get("/", function(req, res, next){
+  res.render("index", {appType:"My Gabble"})
 })
 
 app.listen(3000, function(){
