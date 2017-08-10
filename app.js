@@ -12,13 +12,12 @@ app.set('views', './views')
 app.set('view engine', 'mustache')
 app.use(express.static(path.join(__dirname, 'static')))
 
-// before you use this, make sure to update the default.json file in /config
-// const conn = mysql.createConnection({
-//   host: config.get('db.host'),
-//   database: config.get('db.database'),
-//   user: config.get('db.user'),
-//   password: config.get('db.password')
-// })
+const conn = mysql.createConnection({
+  host: config.get('db.host'),
+  database: config.get('db.database'),
+  user: config.get('db.user'),
+  password: config.get('db.password')
+})
 
 app.get("/", function(req, res, next){
   res.render("index", {appType:"Signup for Gabble!"})
