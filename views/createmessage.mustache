@@ -8,8 +8,8 @@
 <body>
   <h1>{{appType}}</h1>
     <!-- New message will post to mygabble.mustache -->
-    <form method="get" action="/createmessage">
-        <textarea name="message" id="message" rows="10" cols="30" required maxlength="140">
+    <form method="post" action="/createmessage">
+        <textarea name="message" id="message" rows="10" cols="30" required maxlength="140" >
           Type your message here!
         </textarea>
         <button type="submit" id="submit">Submit</button>

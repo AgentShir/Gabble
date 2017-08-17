@@ -68,7 +68,7 @@ app.post("/register", function(req, res, next){
 
 })
 
-//Todo: Figure out where this goes. This is the signup page for Gabble (Bruce, Max, Boots, Connor. PS - They're all dogs).
+//Todo: Figure out where this goes. This is the signup page for Gabble (Bruce, Max, Boots, Connor, Gypsy. PS - They're all dogs).
 // Todo: ADD PASSWORD TO FORM
 
 app.post("/", function(req, res, next){
@@ -99,9 +99,24 @@ app.get("/createmessage", function(req, res, next){
   res.render("createmessage", {appType:"Create New Message:"})
 })
 
-// Getting the new message to post
-app.post("/mygabble", function(req, res, next){
-  res.render("mygabble", {appType:"Your Message"})
+// GETTING the new message to post
+app.post("/createmessage", function(req, res, next){
+  const message = req.body.message
+
+  const sql2 =`
+  INSERT INTO posts(messages)
+  VALUES (?)
+  `
+
+  conn.query(sql2, [message], function(err, results, fields){
+    if (!err){
+      console.log('No, no bad dog')
+      res.redirect("/mygabble")
+    } else{
+      console.log(err)
+      res.send("Fetch!")
+    }
+  })
 })
 
 // This points to signup. It might. I'm writing notes because I keep mixing the damn things up.
