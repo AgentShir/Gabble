@@ -28,7 +28,7 @@ app.post("/", function(req, res, next){
   const displayname = req.body.displayname
   const fname = req.body.fname
   const lname = req.body.lname
-// Todo: ADD PASSWORD, I put this twice on purpose.
+// Todo: ADD PASSWORD!!!!
 
   const sql = `
     INSERT INTO gabblers (username, displayname, fname, lname)
@@ -45,6 +45,11 @@ app.post("/", function(req, res, next){
     }
   })
 })
+
+// Working on getting createmessage to show up.
+// app.post("/createmessage", function(req, res, next){
+//     const message = req.body.message
+// })
 
 // This points to signup. It might. I'm writing notes because I keep mixing the damn things up.
 app.get("/signup", function(req, res, next){

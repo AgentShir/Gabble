@@ -6,6 +6,11 @@
   <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
-  <h1>Login {{appType}}!</h1>
+  <h1>Gabble Login</h1>
+  <form action="/login" method="post">
+    <input type="text" id="username" placeholder="User Name" name="username" required maxlength="100"><br />
+    <input type="password" id="password" placeholder="Password" name="password" required minlength="8"><br />
+    <button type="submit" id="submit">Submit</button>
+  </form>
 </body>
 </html>
