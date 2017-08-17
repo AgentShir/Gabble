@@ -5,6 +5,8 @@ const mustacheExpress = require('mustache-express');
 const bodyParser = require('body-parser')
 const config = require('config')
 const mysql = require('mysql')
+const uuid = require('uuid')
+const bcrypt = require('bcrypt')
 
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json())
@@ -18,6 +20,52 @@ const conn = mysql.createConnection({
   database: config.get('db.database'),
   user: config.get('db.user'),
   password: config.get('db.password')
+})
+
+// Following the tokenAuth lecture
+app.post("/login", function(req, res, next){
+  const username = req.body.username
+  const password = req.body.password
+
+  const sql = `
+  SELECT password from gabble_tokens
+  WHERE username = ?
+  `
+
+  conn.query(sql, [username], function(err, results, fields){
+    const hashedPassword = results[0]
+
+    bcrypt.compare(password, hashedPassword).then(function(res){
+      if (res){
+        const token = uuid()
+        res.json({
+          token: token
+        })
+      } else {
+        res.status(401).json({
+          message: "You Shall Not Pass"
+        })
+      }
+    })
+  })
+})
+
+app.post("/register", function(req, res, next){
+  const username = req.body.username
+  const password = req.body.password
+
+  const sql = `
+  INSERT into gabble_tokens (username, password)
+  VALUES (? , ?)
+  `
+  bcrypt.hash(password).then(function(hashedPassword){
+    conn.query(sql, [username, hashedPassword], function(err, results, fields){
+      res.json({
+        message: "You're in like Flynn"
+      })
+    })
+  })
+
 })
 
 //Todo: Figure out where this goes. This is the signup page for Gabble (Bruce, Max, Boots, Connor. PS - They're all dogs).
@@ -46,10 +94,15 @@ app.post("/", function(req, res, next){
   })
 })
 
-// Working on getting createmessage to show up.
-// app.post("/createmessage", function(req, res, next){
-//     const message = req.body.message
-// })
+// Getting createmessage.mustache to work
+app.get("/createmessage", function(req, res, next){
+  res.render("createmessage", {appType:"Create New Message:"})
+})
+
+// Getting the new message to post
+app.post("/mygabble", function(req, res, next){
+  res.render("mygabble", {appType:"Your Message"})
+})
 
 // This points to signup. It might. I'm writing notes because I keep mixing the damn things up.
 app.get("/signup", function(req, res, next){

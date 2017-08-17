@@ -6,9 +6,9 @@
   <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
-  <h1>Enter New Message:</h1>
+  <h1>{{appType}}</h1>
     <!-- New message will post to mygabble.mustache -->
-    <form method="post" action="/mygabble">
+    <form method="get" action="/createmessage">
         <textarea name="message" id="message" rows="10" cols="30" required maxlength="140">
           Type your message here!
         </textarea>
