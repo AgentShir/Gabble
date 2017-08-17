@@ -1,8 +1,8 @@
 {
     "db":{
         "host":"localhost",
-        "user":"gabbleUsers"
-        "password":"=%wH3W4ac8"
+        "user":"root",
+        "password":"",
         "database":"Gabble"
     }
 }
