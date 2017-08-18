@@ -23,6 +23,7 @@ const conn = mysql.createConnection({
 })
 
 // Following the tokenAuth lecture
+// Todo: Fix error: data and salt arguments required
 app.post("/login", function(req, res, next){
   const username = req.body.username
   const password = req.body.password
@@ -93,23 +94,24 @@ app.post("/", function(req, res, next){
   })
 })
 
-// Getting createpost.mustache to work
+// Form to create new posts
 app.get("/createpost", function(req, res, next){
-  res.render("createpost", {appType:"Create New Message:"})
+  res.render("createpost", {appType:"Create New Post:"})
 })
 
-// Showing new post CHANGE MESSAGES TO POSTS
+// Sends new posts to posts database
+// Todo: POSTS NOT YET CONNECTED TO USERS
 app.post("/createpost", function(req, res, next){
-  const post = req.body.post
+  const gpost = req.body.gpost
 
   const sql2 =`
-  INSERT INTO posts(post)
+  INSERT INTO posts(posts)
   VALUES (?)
   `
 
-  conn.query(sql2, [post], function(err, results, fields){
+  conn.query(sql2, [gpost], function(err, results, fields){
     if (!err){
-      console.log('No, no bad dog')
+      console.log('No no bad dog')
       res.redirect("/mygabble")
     } else{
       console.log(err)
@@ -118,7 +120,7 @@ app.post("/createpost", function(req, res, next){
   })
 })
 
-// Signup page. It might. I'm writing notes because I keep mixing the damn things up.
+// Signup page. It might. I'm writing comments because I keep mixing the damn things up.
 app.get("/signup", function(req, res, next){
   res.render("signup", {appType:"Signup for Gabble!"})
 })
@@ -131,6 +133,11 @@ app.get("/mygabble", function(req, res, next){
   // VALUES (?)
   // `
 
+})
+
+// Login page for registered users
+app.get("/login", function(req, res, next){
+  res.render("login", {appType: "Login To Your Gabble"})
 })
 
 app.get("/", function(req, res, next){
