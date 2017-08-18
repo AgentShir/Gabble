@@ -33,10 +33,10 @@ app.post("/login", function(req, res, next){
   `
 
   conn.query(sql, [username], function(err, results, fields){
-    const hashedPassword = results[0]
+    const hashedPassword = results[0].password
 
-    bcrypt.compare(password, hashedPassword).then(function(res){
-      if (res){
+    bcrypt.compare(password, hashedPassword).then(function(result){
+      if (result){
         const token = uuid()
         res.json({
           token: token
@@ -50,7 +50,7 @@ app.post("/login", function(req, res, next){
   })
 })
 
-app.post("/register", function(req, res, next){
+app.get("/register", function(req, res, next){
   const username = req.body.username
   const password = req.body.password
 
@@ -61,11 +61,10 @@ app.post("/register", function(req, res, next){
   bcrypt.hash(password).then(function(hashedPassword){
     conn.query(sql, [username, hashedPassword], function(err, results, fields){
       res.json({
-        message: "You're in like Flynn"
+        message: "In like Flynn"
       })
     })
   })
-
 })
 
 //Todo: Figure out where this goes. This is the signup page for Gabble (Bruce, Max, Boots, Connor, Gypsy. PS - They're all dogs).
@@ -94,21 +93,21 @@ app.post("/", function(req, res, next){
   })
 })
 
-// Getting createmessage.mustache to work
-app.get("/createmessage", function(req, res, next){
-  res.render("createmessage", {appType:"Create New Message:"})
+// Getting createpost.mustache to work
+app.get("/createpost", function(req, res, next){
+  res.render("createpost", {appType:"Create New Message:"})
 })
 
-// GETTING the new message to post
-app.post("/createmessage", function(req, res, next){
-  const message = req.body.message
+// Showing new post CHANGE MESSAGES TO POSTS
+app.post("/createpost", function(req, res, next){
+  const post = req.body.post
 
   const sql2 =`
-  INSERT INTO posts(messages)
+  INSERT INTO posts(post)
   VALUES (?)
   `
 
-  conn.query(sql2, [message], function(err, results, fields){
+  conn.query(sql2, [post], function(err, results, fields){
     if (!err){
       console.log('No, no bad dog')
       res.redirect("/mygabble")
@@ -119,14 +118,19 @@ app.post("/createmessage", function(req, res, next){
   })
 })
 
-// This points to signup. It might. I'm writing notes because I keep mixing the damn things up.
+// Signup page. It might. I'm writing notes because I keep mixing the damn things up.
 app.get("/signup", function(req, res, next){
   res.render("signup", {appType:"Signup for Gabble!"})
 })
 // Todo: signup for Gabble or click to login if already a user
 
-app.post("/login", function(req, res){
-  // Todo: login form
+app.get("/mygabble", function(req, res, next){
+
+  // const sql3 =`
+  // SELECT * FROM Gabble.posts
+  // VALUES (?)
+  // `
+
 })
 
 app.get("/", function(req, res, next){

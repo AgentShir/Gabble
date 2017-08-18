@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Create A New Message</title>
+  <title>Create A New Post</title>
   <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
   <h1>{{appType}}</h1>
     <!-- New message will post to mygabble.mustache -->
-    <form method="post" action="/createmessage">
-        <textarea name="message" id="message" rows="10" cols="30" required maxlength="140" >
-          Type your message here!
+    <form method="post" action="/createpost">
+        <textarea name="post" id="post" rows="10" cols="30" required maxlength="140" >
+          Type your post here!
         </textarea>
         <button type="submit" id="submit">Submit</button>
     </form>
