@@ -7,6 +7,8 @@ const config = require('config')
 const mysql = require('mysql')
 const uuid = require('uuid')
 const bcrypt = require('bcrypt')
+const session = require('express-session')
+const expressValidator = require('express-validator')
 
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json())
@@ -29,8 +31,8 @@ app.post("/login", function(req, res, next){
   const password = req.body.password
 
   const sql = `
-  SELECT password from gabble_tokens
-  WHERE username = ?
+    SELECT password from gabble_tokens
+    WHERE username = ?
   `
 
   conn.query(sql, [username], function(err, results, fields){
@@ -39,8 +41,16 @@ app.post("/login", function(req, res, next){
     bcrypt.compare(password, hashedPassword).then(function(result){
       if (result){
         const token = uuid()
-        res.json({
-          token: token
+
+        const tokenUpdateSQL =`
+          UPDATE users
+          SET token = ?
+          WHERE username = ?
+        `
+        conn.query(tokenUpdateSQL, [token, username], function(err, results, fields){
+          res.json({
+            token: token
+          })
         })
       } else {
         res.status(401).json({
@@ -51,7 +61,7 @@ app.post("/login", function(req, res, next){
   })
 })
 
-app.get("/register", function(req, res, next){
+app.get("/login", function(req, res, next){
   const username = req.body.username
   const password = req.body.password
 
@@ -72,18 +82,18 @@ app.get("/register", function(req, res, next){
 // Todo: ADD PASSWORD TO FORM
 
 app.post("/", function(req, res, next){
-  const username = req.body.username
   const displayname = req.body.displayname
   const fname = req.body.fname
   const lname = req.body.lname
-// Todo: ADD PASSWORD!!!!
+  const username = req.body.username
+  const password = req.body.password
 
   const sql = `
-    INSERT INTO gabblers (username, displayname, fname, lname)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO gabblers (displayname, fname, lname, username, password)
+    VALUES (?, ?, ?, ?, ?)
   `
 
-  conn.query(sql, [username, displayname, fname, lname], function(err, results, fields){
+  conn.query(sql, [displayname, fname, lname, username, password], function(err, results, fields){
     if (!err) {
       console.log('It seems to work')
       res.redirect("/")
@@ -120,7 +130,7 @@ app.post("/createpost", function(req, res, next){
   })
 })
 
-// Signup page. It might. I'm writing comments because I keep mixing the damn things up.
+// Signup page. Signup form.
 app.get("/signup", function(req, res, next){
   res.render("signup", {appType:"Signup for Gabble!"})
 })
@@ -136,6 +146,7 @@ app.get("/mygabble", function(req, res, next){
 })
 
 // Login page for registered users
+// Forms shows up, isn't functional yet
 app.get("/login", function(req, res, next){
   res.render("login", {appType: "Login To Your Gabble"})
 })

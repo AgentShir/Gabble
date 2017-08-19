@@ -9,3 +9,29 @@ body {
 h1 {
   color:blue;
 }
+
+.navigation{
+  display: flex;
+  justify-content: space-around;
+
+}
+
+.gpost{
+  
+}
+
+.home{
+
+}
+
+.login{
+
+}
+
+.createpost{
+
+}
+
+.signup{
+
+}
