@@ -24,14 +24,34 @@ const conn = mysql.createConnection({
   password: config.get('db.password')
 })
 
+function Authenticate(req, res, next){
+  const token = req.headers.Authorization
+
+  const sql = `
+  SELECT * FROM users
+  WHERE token = ?
+  `
+
+  conn.query(sql, [token], function(err, results, fields){
+    if(results.length > 0){
+      next()
+    } else {
+      res.status(401).json({
+          message: "These are not them, these are their stunt doubles!"
+      })
+    }
+  })
+}
+
 // Following the tokenAuth lecture
 // Todo: Fix error: data and salt arguments required
+// Login posts to username and password in gabblers database
 app.post("/login", function(req, res, next){
   const username = req.body.username
   const password = req.body.password
 
   const sql = `
-    SELECT password from gabble_tokens
+    SELECT password from gabblers
     WHERE username = ?
   `
 
@@ -66,7 +86,7 @@ app.get("/login", function(req, res, next){
   const password = req.body.password
 
   const sql = `
-  INSERT into gabble_tokens (username, password)
+  INSERT into gabblers (username, password)
   VALUES (? , ?)
   `
   bcrypt.hash(password).then(function(hashedPassword){

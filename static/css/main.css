@@ -10,14 +10,18 @@ h1 {
   color:blue;
 }
 
-.navigation{
-  display: flex;
-  justify-content: space-around;
+.wrapper{
 
 }
 
+.navigation{
+  width: 800px;
+  display: flex;
+  justify-content: space-around;
+}
+
 .gpost{
-  
+
 }
 
 .home{
