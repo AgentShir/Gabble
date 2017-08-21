@@ -1,14 +1,12 @@
-const express = require('express')
 const app = express()
-const path = require('path')
-const mustacheExpress = require('mustache-express');
 const bodyParser = require('body-parser')
-const config = require('config')
-const mysql = require('mysql')
-const uuid = require('uuid')
-const bcrypt = require('bcrypt')
-const session = require('express-session')
-const expressValidator = require('express-validator')
+const express = require('express')
+
+const Authenticate = require("./middleware/auth")
+
+const protectedRoutes = require('./routes/protected')
+
+const publicRoutes = require('./routes/public')
 
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json())
@@ -16,87 +14,8 @@ app.engine('mustache', mustacheExpress())
 app.set('views', './views')
 app.set('view engine', 'mustache')
 app.use(express.static(path.join(__dirname, 'static')))
-
-const conn = mysql.createConnection({
-  host: config.get('db.host'),
-  database: config.get('db.database'),
-  user: config.get('db.user'),
-  password: config.get('db.password')
-})
-
-function Authenticate(req, res, next){
-  const token = req.headers.Authorization
-
-  const sql = `
-  SELECT * FROM users
-  WHERE token = ?
-  `
-
-  conn.query(sql, [token], function(err, results, fields){
-    if(results.length > 0){
-      next()
-    } else {
-      res.status(401).json({
-          message: "These are not them, these are their stunt doubles!"
-      })
-    }
-  })
-}
-
-// Following the tokenAuth lecture
-// Todo: Fix error: data and salt arguments required
-// Login posts to username and password in gabblers database
-app.post("/login", function(req, res, next){
-  const username = req.body.username
-  const password = req.body.password
-
-  const sql = `
-    SELECT password from gabblers
-    WHERE username = ?
-  `
-
-  conn.query(sql, [username], function(err, results, fields){
-    const hashedPassword = results[0].password
-
-    bcrypt.compare(password, hashedPassword).then(function(result){
-      if (result){
-        const token = uuid()
-
-        const tokenUpdateSQL =`
-          UPDATE users
-          SET token = ?
-          WHERE username = ?
-        `
-        conn.query(tokenUpdateSQL, [token, username], function(err, results, fields){
-          res.json({
-            token: token
-          })
-        })
-      } else {
-        res.status(401).json({
-          message: "You Shall Not Pass"
-        })
-      }
-    })
-  })
-})
-
-app.get("/login", function(req, res, next){
-  const username = req.body.username
-  const password = req.body.password
-
-  const sql = `
-  INSERT into gabblers (username, password)
-  VALUES (? , ?)
-  `
-  bcrypt.hash(password).then(function(hashedPassword){
-    conn.query(sql, [username, hashedPassword], function(err, results, fields){
-      res.json({
-        message: "In like Flynn"
-      })
-    })
-  })
-})
+app.use('/api', publicRoutes)
+app.use('/api', Authenticate, protectedRoutes)
 
 //Todo: Figure out where this goes. This is the signup page for Gabble (Bruce, Max, Boots, Connor, Gypsy. PS - They're all dogs).
 // Todo: ADD PASSWORD TO FORM
