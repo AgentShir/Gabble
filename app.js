@@ -1,20 +1,20 @@
+const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
-const express = require('express')
 
 const Authenticate = require("./middleware/auth")
 
-const protectedRoutes = require('./routes/protected')
+const protectedRoutes = require("./routes/protected")
 
-const publicRoutes = require('./routes/public')
+const publicRoutes = require("./routes/public")
 
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json())
-app.engine('mustache', mustacheExpress())
+// app.engine('mustache', mustacheExpress())
 app.set('views', './views')
 app.set('view engine', 'mustache')
-app.use(express.static(path.join(__dirname, 'static')))
-app.use('/api', publicRoutes)
+//app.use(express.static(path.join(__dirname, 'static')))
+app.use('/', publicRoutes)
 app.use('/api', Authenticate, protectedRoutes)
 
 //Todo: Figure out where this goes. This is the signup page for Gabble (Bruce, Max, Boots, Connor, Gypsy. PS - They're all dogs).
