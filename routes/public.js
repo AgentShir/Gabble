@@ -62,9 +62,7 @@ router.post('/register', function(req, res, next){
 })
 
 router.get("/", function(req, res, next){
-  res.json({
-    message: 'Home is where this route is'
-  })
+  res.render("index", {appType:"My Gabble"})
 })
 
 module.exports = router

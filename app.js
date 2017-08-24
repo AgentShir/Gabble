@@ -1,4 +1,6 @@
 const express = require('express')
+const mustacheExpress = require('mustache-express');
+const path = require('path');
 const app = express()
 const bodyParser = require('body-parser')
 
@@ -10,10 +12,10 @@ const publicRoutes = require("./routes/public")
 
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json())
-// app.engine('mustache', mustacheExpress())
+app.engine('mustache', mustacheExpress())
 app.set('views', './views')
 app.set('view engine', 'mustache')
-//app.use(express.static(path.join(__dirname, 'static')))
+app.use(express.static(path.join(__dirname, 'static')))
 app.use('/', publicRoutes)
 app.use('/api', Authenticate, protectedRoutes)
 
@@ -90,9 +92,7 @@ app.get("/login", function(req, res, next){
   res.render("login", {appType: "Login To Your Gabble"})
 })
 
-app.get("/", function(req, res, next){
-  res.render("index", {appType:"My Gabble"})
-})
+
 
 app.listen(3000, function(){
   console.log("App running on port 3000")
